@@ -23,6 +23,7 @@ var f4js = require('fuse4js');
 var fs = require('fs');
 var obj = null;   // The JSON object we'll be exposing as a file system
 var options = {};  // See parseArgs()
+var bins = [];//['poo', 'apple'];
 
 
 //---------------------------------------------------------------------------
@@ -32,6 +33,7 @@ var options = {};  // See parseArgs()
  * the sub-object corresponding to the specified path
  */
 function lookup(root, path) {
+  console.log('lookup: root=' + root + ', path=' + path);
   var cur = null, previous = null, name = '';
   if (path === '/') {
     return { node:root, parent:null, name:'' };
@@ -66,23 +68,32 @@ function getattr(path, cb) {
   var info = lookup(obj, path);
   var node = info.node;
 
-  switch (typeof node) {
-  case 'undefined':
-    err = -2; // -ENOENT
-    break;
+  //take off first slash
+  path = path.slice(1);
+  console.log('getattr ' + path)
+  if (bins.indexOf(path) != -1) {
+    console.log('found one!')
+    stat.size = 4096;
+    stat.mode = 0100667; // file with 666 permissions
+  } else {
+    switch (typeof node) {
+    case 'undefined':
+      err = -2; // -ENOENT
+      break;
+      
+    case 'object': // directory
+      stat.size = 4096;   // standard size of a directory
+      stat.mode = 040777; // directory with 777 permissions
+      break;
     
-  case 'object': // directory
-    stat.size = 4096;   // standard size of a directory
-    stat.mode = 040777; // directory with 777 permissions
-    break;
-  
-  case 'string': // file
-    stat.size = node.length;
-    stat.mode = 0100666; // file with 666 permissions
-    break;
-    
-  default:
-    break;
+    case 'string': // file
+      stat.size = node.length;
+      stat.mode = 0100666; // file with 666 permissions
+      break;
+      
+    default:
+      break;
+    }
   }
   cb( err, stat );
 };
@@ -96,6 +107,7 @@ function getattr(path, cb) {
  *     and names is the result in the form of an array of file names (when err === 0).
  */
 function readdir(path, cb) {
+  console.log('readdir ' + path);
   var names = [];
   var err = 0; // assume success
   var info = lookup(obj, path);
@@ -132,6 +144,7 @@ function readdir(path, cb) {
  *     read(), write(), and release() calls.
  */
 function open(path, flags, cb) {
+  console.log('open ' + path);
   var err = 0; // assume success
   var info = lookup(obj, path);
   
@@ -154,6 +167,7 @@ function open(path, flags, cb) {
  *     A positive value represents the number of bytes actually read.
  */
 function read(path, offset, len, buf, fh, cb) {
+  console.log('read ' + path);
   var err = 0; // assume success
   var info = lookup(obj, path);
   var file = info.node;
@@ -514,8 +528,22 @@ function parseArgs() {
 }
 
 //---------------------------------------------------------------------------
+function loadbins() {
+  var fs = require('fs');
+  var file = __dirname + '/bins.json';
+   
+  fs.readFile(file, 'utf8', function (err, data) {
+    if (err) {
+      console.log('Error: ' + err);
+      return;
+    }
+   
+    bins = JSON.parse(data);
+  });  
+}
 
 (function main() {
+  loadbins();
   if (parseArgs()) {
     console.log("\nInput file: " + options.inJson);
     console.log("Mount point: " + options.mountPoint);
