@@ -11,12 +11,13 @@ var bins = require('./data/bins.json');
 var fs = require('fs');
 var pth = require('path');
 var mkdirp = require('mkdirp');
+var proc = require('child_process');
 var options = {}; 
+var prefix = '/usr/local';//npm.config.get('prefix');
 
 
 (function main() {
-  npm.load(function (er, npm) {
-    var prefix = npm.config.get('prefix');
+    prefix = '/usr/local';
     options.mountPoint = pth.join(prefix, 'npmfs');    
     options.debugFuse = false;
     mnt = options.mountPoint;
@@ -26,7 +27,6 @@ var options = {};
         f4js.start(options.mountPoint, handlers(), options.debugFuse);
       });
     });
-  })
 
   var proc = require('child_process');
   var closing = false;
@@ -72,18 +72,24 @@ function getattr(path, cb) {
 function readlink(path, cb) {
   //take off first slash
   var name = path.slice(1);
-  var prefix_path = pth.resolve(npm.config.get('prefix'), 'bin', name);
-  //console.log('getattr ' + path)
+  var prefix_path = pth.resolve(prefix, 'bin', name);
   if (bins.indexOf(name) != -1) {
+    //see whether it is already installed
     if (fs.existsSync(prefix_path)) {
+      //grab its real location here
+      console.log(name + ' already exists')
       return cb(0, prefix_path)
     } else {
-      npm.config.set('global', true);
-      npm.commands.install([name], function() {
-        return cb(0, prefix_path);
-      })
+      console.log('installing ' + name)
+
+      var child = proc.fork(pth.join(__dirname, 'npm-install.js'), [name]);
+      child.on('message', function(m) {
+        //could ask for the real path of it here
+        cb(0, prefix_path);
+      });
     }
   } else {
+    console.log('no file error')
     var ENOENT = 2; //no file or directory error
     return cb(-ENOENT)
   }
