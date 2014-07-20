@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node bin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sean West",
   "license": "MIT",
   "dependencies": {
     "fuse4js": "^0.1.9",
+    "mkdirp": "^0.5.0",
+    "npm": "^1.4.21",
     "rimraf": "^2.2.8"
   }
 }

@@ -77,7 +77,6 @@ function readlink(path, cb) {
     //see whether it is already installed
     if (fs.existsSync(prefix_path)) {
       //grab its real location here
-      console.log(name + ' already exists')
       return cb(0, prefix_path)
     } else {
       console.log('installing ' + name)
@@ -89,7 +88,6 @@ function readlink(path, cb) {
       });
     }
   } else {
-    console.log('no file error')
     var ENOENT = 2; //no file or directory error
     return cb(-ENOENT)
   }

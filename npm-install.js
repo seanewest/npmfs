@@ -1,5 +1,4 @@
 var npm = require('npm');
-var fuse4js = require('fuse4js');
 
 var prefix = '/usr/local';
 
