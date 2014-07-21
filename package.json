@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node bin.js",
+    "install": "./install.sh",
+    "uninstall": "umount /usr/local/npmfs; rm -f ~/Library/LaunchAgents/npmfs-service.plist; rm -f /etc/paths.d/npmfs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sean West",
