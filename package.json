@@ -2,10 +2,10 @@
   "name": "npmfs",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "bin": "cmd.js",
   "scripts": {
-    "install": "./install.sh",
-    "uninstall": "umount /usr/local/npmfs; rm -f ~/Library/LaunchAgents/npmfs-service.plist; rm -f /etc/paths.d/npmfs",
+    "add-service": "scripts/add-service.sh",
+    "remove-service": "scripts/remove-service.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sean West",

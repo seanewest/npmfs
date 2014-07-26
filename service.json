@@ -2,7 +2,7 @@
   "npmfs-service": {
     "description": "start npmfs as a service",
     "scripts": {
-      "start": "node ../../bin.js"
+      "start": "node ../../cmd.js"
     },
     "env": {},
     "args": {}

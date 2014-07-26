@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
  * 
  * Copyright (c) 2012 VMware, Inc. All rights reserved.
@@ -17,28 +19,34 @@ var prefix = '/usr/local';//npm.config.get('prefix');
 
 
 (function main() {
-    prefix = '/usr/local';
-    options.mountPoint = pth.join(prefix, 'npmfs');    
-    options.debugFuse = false;
-    mnt = options.mountPoint;
-    umount(mnt, function() {
-      mkdirp(mnt, function() {
-        console.log("starting npmfs at " + options.mountPoint);
-        f4js.start(options.mountPoint, handlers(), options.debugFuse);
-      });
+  prefix = '/usr/local';
+  options.mountPoint = pth.join(prefix, 'npmfs');    
+  options.debugFuse = false;
+  mnt = options.mountPoint;
+  umount(mnt, function() {
+    mkdirp(mnt, function() {
+      console.log("starting npmfs at " + options.mountPoint);
+      f4js.start(options.mountPoint, handlers(), options.debugFuse);
     });
+  });
 
   var proc = require('child_process');
   var closing = false;
-  process.on('SIGINT', function() {
+  function shutdown() {   
     if (closing) return;
     console.log("stopping npmfs"); 
     closing = true;
     proc.fork(pth.join(__dirname, './lib/destroy.js'), [options.mountPoint, ''+process.pid]);
-  });
+  }
+  
+  process.on('SIGINT', shutdown);
 
   process.on('SIGTERM', function() {
-    process.exit();
+    if (!closing) {
+      shutdown()
+    } else {
+      process.exit();
+    }
   });
 })();
 
@@ -81,7 +89,7 @@ function readlink(path, cb) {
     } else {
       console.log('installing ' + name)
 
-      var child = proc.fork(pth.join(__dirname, 'npm-install.js'), [name]);
+      var child = proc.fork(pth.join(__dirname, 'lib/npm-install.js'), [name]);
       child.on('message', function(m) {
         //could ask for the real path of it here
         cb(0, prefix_path);
