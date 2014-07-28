@@ -9,18 +9,29 @@
 var f4js = require('fuse4js');
 var npm = require("npm");
 var umount = require('./lib/umount');
-var bins = require('./data/bins.json');
 var fs = require('fs');
 var pth = require('path');
 var mkdirp = require('mkdirp');
 var proc = require('child_process');
 var options = {}; 
 var prefix = '/usr/local';//npm.config.get('prefix');
+var names; //either all packages or all package executables
 
 
 (function main() {
-  options.mountPoint = pth.join(prefix, 'npmfs');    
-  options.srcRoot = pth.join(prefix, 'bin');
+  var args = process.argv.slice(2);
+  if (args[0] == '--bins') {
+    names = require('./data/bins.json');
+    options.srcRoot = pth.join(prefix, 'bin');
+    options.mountPoint = pth.join(prefix, 'npmfs');
+  }
+  else {
+    names = require('./data/names.json');
+    options.srcRoot = pth.join(prefix, 'lib', 'node_modules');  
+    var home_modules = pth.join('/', 'Users', 'mrpoop', 'node_modules');
+    options.mountPoint = args[0] || home_modules;
+  }
+
   options.debugFuse = false;
 
   mnt = options.mountPoint;
@@ -67,7 +78,7 @@ function getattr(path, cb) {
     stat.size = 4096;   // standard size of a directory
     stat.mode = 040777; // directory with 777 permissions
     return cb(0, stat);
-  } else if (bins.indexOf(name) != -1) {
+  } else if (names.indexOf(name) != -1) {
     var stat = {};
     stat.size = 4096; // seems big enough for a symlink
     stat.mode = 41453; // lrwxr-xr-x symlink
@@ -82,7 +93,7 @@ function readlink(path, cb) {
   //take off first slash
   var name = path.slice(1);
   var src = pth.resolve(options.srcRoot, name);
-  if (bins.indexOf(name) != -1) {
+  if (names.indexOf(name) != -1) {
     //see whether it is already installed
     if (fs.existsSync(src)) {
       //grab its real location here
