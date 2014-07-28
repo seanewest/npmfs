@@ -1,7 +1,7 @@
 {
   "name": "npmfs",
   "version": "0.0.0",
-  "description": "",
+  "description": "All of npm as a filesystem!",
   "bin": "cmd.js",
   "scripts": {
     "add-service": "scripts/add-service.sh",
