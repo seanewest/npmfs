@@ -19,9 +19,10 @@ var prefix = '/usr/local';//npm.config.get('prefix');
 
 
 (function main() {
-  prefix = '/usr/local';
   options.mountPoint = pth.join(prefix, 'npmfs');    
+  options.srcRoot = pth.join(prefix, 'bin');
   options.debugFuse = false;
+
   mnt = options.mountPoint;
   umount(mnt, function() {
     mkdirp(mnt, function() {
@@ -80,19 +81,19 @@ function getattr(path, cb) {
 function readlink(path, cb) {
   //take off first slash
   var name = path.slice(1);
-  var prefix_path = pth.resolve(prefix, 'bin', name);
+  var src = pth.resolve(options.srcRoot, name);
   if (bins.indexOf(name) != -1) {
     //see whether it is already installed
-    if (fs.existsSync(prefix_path)) {
+    if (fs.existsSync(src)) {
       //grab its real location here
-      return cb(0, prefix_path)
+      return cb(0, src)
     } else {
       console.log('installing ' + name)
 
       var child = proc.fork(pth.join(__dirname, 'lib/npm-install.js'), [name]);
       child.on('message', function(m) {
         //could ask for the real path of it here
-        cb(0, prefix_path);
+        cb(0, src);
       });
     }
   } else {
