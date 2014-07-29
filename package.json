@@ -2,12 +2,15 @@
   "name": "npmfs",
   "version": "0.0.0",
   "description": "All of npm as a filesystem!",
-  "bin": "cmd.js",
   "scripts": {
-    "add-service": "scripts/add-service.sh",
-    "remove-service": "scripts/remove-service.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "add-service": "ndm generate; ndm start",
+    "remove-service": "ndm remove"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seanewest/npmfs"
+  },
+  "bin": "cmd.js",
   "author": "Sean West",
   "license": "MIT",
   "dependencies": {

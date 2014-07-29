@@ -10,39 +10,57 @@ var proc = require('child_process');
 var options = {}; 
 var prefix = '/usr/local';
 var names; //either all packages or all package executables
-var appname; //npmfs or npmbinfs
 
-(function main() {
+parseArgs();
+if (options.runnable) {
+  main();
+}
+
+function parseArgs() {
   var args = process.argv.slice(2);
-  if (args[0] == '--bin') {
+  if (args[0] === 'install') {
+    proc.exec('ndm generate > /dev/null; ndm start', 
+      {"cwd": __dirname}, 
+      function (error, stdout, stderr) {
+        process.stdout.write(stdout);
+      });
+  }
+  else if (args[0] === 'uninstall') {
+    proc.exec('ndm remove', {"cwd": __dirname}, 
+      function (error, stdout, stderr) {
+        process.stdout.write(stdout);
+      });
+  }
+  else if (args[0] === '--bin') {
     names = require('./data/bins.json');
     options.srcRoot = pth.join(prefix, 'bin');
     options.mountPoint = args[1];
-    appname = 'npmbinfs';
+    options.runnable = true;
   }
   else {
     names = require('./data/names.json');
     options.srcRoot = pth.join(prefix, 'lib', 'node_modules');  
     options.mountPoint = args[0];
-    appname = 'npmfs'
+    options.runnable = true;
   }
 
   options.debugFuse = false;
+}
 
+function main() {
   mnt = options.mountPoint;
   umount(mnt, function() {
     mkdirp(mnt, function() {
-      console.log("starting " + appname + " at " + options.mountPoint);
+      console.log("starting npmfs at " + options.mountPoint);
       console.log("Ctrl-c to stop process");
       f4js.start(options.mountPoint, handlers(), options.debugFuse);
     });
   });
 
-  var proc = require('child_process');
   var closing = false;
   function shutdown() {   
     if (closing) return;
-    console.log("stopping " + appname); 
+    console.log("stopping npmfs"); 
     closing = true;
     proc.fork(pth.join(__dirname, './lib/destroy.js'), [options.mountPoint, ''+process.pid]);
   }
@@ -56,7 +74,7 @@ var appname; //npmfs or npmbinfs
       process.exit();
     }
   });
-})();
+}
 
 function handlers() {
  return {
@@ -90,16 +108,13 @@ function readlink(path, cb) {
   var name = path.slice(1);
   var src = pth.resolve(options.srcRoot, name);
   if (names.indexOf(name) != -1) {
-    //see whether it is already installed
     if (fs.existsSync(src)) {
-      //grab its real location here
       return cb(0, src)
     } else {
       console.log('installing ' + name)
 
       var child = proc.fork(pth.join(__dirname, 'lib/npm-install.js'), [name]);
       child.on('message', function(m) {
-        //could ask for the real path of it here
         cb(0, src);
       });
     }
