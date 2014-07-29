@@ -1,11 +1,5 @@
 #!/usr/bin/env node
 
-/*
- * 
- * Copyright (c) 2012 VMware, Inc. All rights reserved.
- * 
- */
-
 var f4js = require('fuse4js');
 var npm = require("npm");
 var umount = require('./lib/umount');
@@ -14,22 +8,23 @@ var pth = require('path');
 var mkdirp = require('mkdirp');
 var proc = require('child_process');
 var options = {}; 
-var prefix = '/usr/local';//npm.config.get('prefix');
+var prefix = '/usr/local';
 var names; //either all packages or all package executables
-
+var appname; //npmfs or npmbinfs
 
 (function main() {
   var args = process.argv.slice(2);
-  if (args[0] == '--bins') {
+  if (args[0] == '--bin') {
     names = require('./data/bins.json');
     options.srcRoot = pth.join(prefix, 'bin');
-    options.mountPoint = pth.join(prefix, 'npmfs');
+    options.mountPoint = args[1];
+    appname = 'npmbinfs';
   }
   else {
     names = require('./data/names.json');
     options.srcRoot = pth.join(prefix, 'lib', 'node_modules');  
-    var home_modules = pth.join('/', 'Users', 'mrpoop', 'node_modules');
-    options.mountPoint = args[0] || home_modules;
+    options.mountPoint = args[0];
+    appname = 'npmfs'
   }
 
   options.debugFuse = false;
@@ -37,7 +32,8 @@ var names; //either all packages or all package executables
   mnt = options.mountPoint;
   umount(mnt, function() {
     mkdirp(mnt, function() {
-      console.log("starting npmfs at " + options.mountPoint);
+      console.log("starting " + appname + " at " + options.mountPoint);
+      console.log("Ctrl-c to stop process");
       f4js.start(options.mountPoint, handlers(), options.debugFuse);
     });
   });
@@ -46,7 +42,7 @@ var names; //either all packages or all package executables
   var closing = false;
   function shutdown() {   
     if (closing) return;
-    console.log("stopping npmfs"); 
+    console.log("stopping " + appname); 
     closing = true;
     proc.fork(pth.join(__dirname, './lib/destroy.js'), [options.mountPoint, ''+process.pid]);
   }
