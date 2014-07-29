@@ -13,6 +13,7 @@
   "dependencies": {
     "fuse4js": "^0.1.9",
     "mkdirp": "^0.5.0",
+    "ndm": "^2.7.0",
     "npm": "^1.4.21",
     "rimraf": "^2.2.8"
   }
