@@ -4,7 +4,7 @@ A filesystem that looks like it holds all the node_modules and executables of ev
 ## install
 
 ```
-npm install -g seanewest/npmfs
+npm install -g npmfs
 ```
 
 ## temporarily mount npmfs
