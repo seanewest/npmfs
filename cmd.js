@@ -52,7 +52,7 @@ function main() {
   umount(mnt, function() {
     mkdirp(mnt, function() {
       console.log("starting npmfs at " + options.mountPoint);
-      console.log("Ctrl-c to stop process");
+      console.log("Hit Ctrl-C to stop process");
       f4js.start(options.mountPoint, handlers(), options.debugFuse);
     });
   });
