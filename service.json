@@ -2,16 +2,18 @@
   "npmfs-modules-service": {
     "description": "start npmfs as a service",
     "scripts": {
-      "start": "../../cmd.js"
+      "start": "cmd.js"
     },
+    "module": "npmfs",
     "env": {},
     "args": ["/usr/local/npmfs/node_modules"]
   },
   "npmfs-bin-service": {
     "description": "start npmfs as a service",
     "scripts": {
-      "start": "../../cmd.js"
+      "start": "cmd.js"
     },
+    "module": "npmfs",
     "env": {},
     "args": ["--bin", "/usr/local/npmfs/bin"]
   }
