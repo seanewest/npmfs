@@ -2,6 +2,7 @@
 A filesystem that looks like it holds all the node_modules and executables of every npm package
 
 ## install
+First you need to install FUSE. See [this link](https://github.com/bcle/fuse4js#requirements) for more info.
 
 ```
 npm install -g npmfs
