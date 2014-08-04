@@ -18,15 +18,17 @@ if (options.runnable) {
 
 function parseArgs() {
   var args = process.argv.slice(2);
+  var ndm = './node_modules/.bin/ndm'
   if (args[0] === 'install') {
-    proc.exec('ndm generate > /dev/null; ndm start', 
+    proc.exec(ndm + "generate; " + ndm + " start", 
       {"cwd": __dirname}, 
       function (error, stdout, stderr) {
         process.stdout.write(stdout);
+        process.stderr.write(stderr);
       });
   }
   else if (args[0] === 'uninstall') {
-    proc.exec('ndm remove', {"cwd": __dirname}, 
+    proc.exec(ndm + ' remove', {"cwd": __dirname}, 
       function (error, stdout, stderr) {
         process.stdout.write(stdout);
       });

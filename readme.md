@@ -45,27 +45,36 @@ Now try to run an executable you don't have like ```blah``` or ```wow```. It wil
 
 You can have npmfs launch on startup by installing it as a service. Paths are located in /usr/local/npmfs/node_modules and /usr/local/npmfs/bin
 ```
-npmfs install
+npm install -g ndm
+PREFIX=`npm config get prefix`
+cd $PREFIX/lib/node_modules/npmfs
+ndm generate
+ndm start
 ```
 permanently add the bin folder to our path
 
 ```
 #if on a mac
-sudo sh -c "echo /usr/local/npmfs/bin > /etc/paths.d/npmfs" #mac only
+PREFIX=`npm config get prefix`
+sudo sh -c "echo $PREFIX/npmfs/bin > /etc/paths.d/npmfs" #mac only
 
 #or on ubuntu (untested)
-sudo sh -c "echo 'export PATH=$PATH:/usr/local/npmfs/bin' > /etc/profile.d/npmfs.sh"
+PREFIX=`npm config get prefix`
+sudo sh -c "echo 'export PATH=$PATH:$PREFIX/npmfs/bin' > /etc/profile.d/npmfs.sh"
 sudo chmod a+x /etc/profile.d/npmfs.sh
 ```
 
 symlink all node_modules
 ```
-ln -s /usr/local/npmfs/node_modules ~/node_modules
+PREFIX=`npm config get prefix`
+ln -s $PREFIX/npmfs/node_modules ~/node_modules
 ```
 
 ## remove service
 ```
-npmfs uninstall
+PREFIX=`npm config get prefix`
+cd $PREFIX/lib/node_modules/npmfs
+ndm remove
 ```
 remove the added paths if needed
 ```
