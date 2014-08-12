@@ -46,14 +46,13 @@ Now try to run an executable you don't have like ```blah``` or ```wow```. It wil
 You can have npmfs launch on startup by installing it with an experimental version of [ndm](https://github.com/seanewest/ndm/tree/global).
 ```
 $ npm install -g seanewest/ndm#global
-$ ndm interview -g npmfs
+$ ndm install npmfs
 starting interview:
 [?] npmfs node_modules directory: /usr/local/npmfs/node_modules
 [?] npmfs bin directory: /usr/local/npmfs/bin
 [?] overwrite service.json with new values? Yes
 wrote /usr/local/lib/node_modules/npmfs/service.json back to disk.
-$ ndm generate -g npmfs
-$ ndm start -g npmfs
+$ ndm start npmfs
 ```
 permanently add the bin folder to our path
 
@@ -73,7 +72,7 @@ ln -s /usr/local/npmfs/node_modules ~/node_modules
 
 ## remove service
 ```
-ndm remove -g npmfs
+ndm remove npmfs
 ```
 remove the added paths if needed
 ```

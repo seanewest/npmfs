@@ -16,6 +16,6 @@
     "rimraf": "^2.2.8"
   },
   "devDependencies": {
-    "ndm": "git://github.com/seanewest/ndm#global"
+    "ndm": "^2.13.2"
   }
 }
