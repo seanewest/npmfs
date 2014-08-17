@@ -43,9 +43,13 @@ Now try to run an executable you don't have like ```blah``` or ```wow```. It wil
 
 ## install service
 
-You can have npmfs launch on startup by installing it with an experimental version of [ndm](https://github.com/seanewest/ndm/tree/global_subservices).
+First install [ndm](https://github.com/npm/ndm) if you don't already have it.
 ```
-$ npm install -g seanewest/ndm#global_subservices
+$ npm install -g ndm
+```
+
+Now install npmfs as a service:
+```
 $ ndm install npmfs
 [?] npmfs node_modules directory: /usr/local/npmfs/node_modules
 [?] npmfs bin directory: /usr/local/npmfs/bin
