@@ -7,7 +7,7 @@ var fs = require('fs');
 var pth = require('path');
 var mkdirp = require('mkdirp');
 var proc = require('child_process');
-var options = {}; 
+var options = {};
 var prefix = '/usr/local';
 var names; //either all packages or all package executables
 
@@ -18,31 +18,17 @@ if (options.runnable) {
 
 function parseArgs() {
   var args = process.argv.slice(2);
-  var ndm = './node_modules/.bin/ndm'
-  if (args[0] === 'install') {
-    proc.exec(ndm + "generate; " + ndm + " start", 
-      {"cwd": __dirname}, 
-      function (error, stdout, stderr) {
-        process.stdout.write(stdout);
-        process.stderr.write(stderr);
-      });
-  }
-  else if (args[0] === 'uninstall') {
-    proc.exec(ndm + ' remove', {"cwd": __dirname}, 
-      function (error, stdout, stderr) {
-        process.stdout.write(stdout);
-      });
-  }
-  else if (args[0] === '--bin') {
+
+  if (args[0] === '--bin') {
     names = require('./data/bins.json');
     options.srcRoot = pth.join(prefix, 'bin');
-    options.mountPoint = args[1];
+    options.mountPoint = process.env.NPMFS_BIN_MOUNT || args[1];
     options.runnable = true;
   }
   else {
     names = require('./data/names.json');
-    options.srcRoot = pth.join(prefix, 'lib', 'node_modules');  
-    options.mountPoint = args[0];
+    options.srcRoot = pth.join(prefix, 'lib', 'node_modules');
+    options.mountPoint = process.env.NPMFS_MOUNT || args[0];
     options.runnable = true;
   }
 
@@ -60,13 +46,13 @@ function main() {
   });
 
   var closing = false;
-  function shutdown() {   
+  function shutdown() {
     if (closing) return;
-    console.log("stopping npmfs"); 
+    console.log("stopping npmfs");
     closing = true;
     proc.fork(pth.join(__dirname, './lib/destroy.js'), [options.mountPoint, ''+process.pid]);
   }
-  
+
   process.on('SIGINT', shutdown);
 
   process.on('SIGTERM', function() {

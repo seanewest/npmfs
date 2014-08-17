@@ -1,20 +1,29 @@
 {
-  "npmfs-modules-service": {
-    "description": "start npmfs as a service",
+  "npmfs-modules": {
+    "description": "start npmfs node_modules as a service",
     "scripts": {
       "start": "cmd.js"
     },
     "module": "npmfs",
-    "env": {},
-    "args": ["/usr/local/npmfs/node_modules"]
+    "env": {
+      "NPMFS_MOUNT": {
+        "default": "/usr/local/npmfs/node_modules",
+        "description": "npmfs node_modules directory"
+      }},
+    "args": []
   },
-  "npmfs-bin-service": {
-    "description": "start npmfs as a service",
+  "npmfs-bin": {
+    "description": "start npmfs bin as a service",
     "scripts": {
       "start": "cmd.js"
     },
     "module": "npmfs",
-    "env": {},
-    "args": ["--bin", "/usr/local/npmfs/bin"]
+    "env": {
+      "NPMFS_BIN_MOUNT": {
+        "default": "/usr/local/npmfs/bin",
+        "description": "npmfs bin directory"
+      }
+    },
+    "args": ["--bin"]
   }
 }
