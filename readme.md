@@ -72,7 +72,11 @@ ln -s /usr/local/npmfs/node_modules ~/node_modules
 ```
 ndm remove npmfs
 ```
-remove the added paths if needed
+remove the added paths if they were created
 ```
+#if on a mac
 sudo rm /etc/paths.d/npmfs
+
+#or on ubuntu (untested)
+sudo rm /etc/profile.d/npmfss.sh
 ```
