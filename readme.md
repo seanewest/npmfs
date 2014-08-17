@@ -43,15 +43,13 @@ Now try to run an executable you don't have like ```blah``` or ```wow```. It wil
 
 ## install service
 
-You can have npmfs launch on startup by installing it with an experimental version of [ndm](https://github.com/seanewest/ndm/tree/global).
+You can have npmfs launch on startup by installing it with an experimental version of [ndm](https://github.com/seanewest/ndm/tree/global_subservices).
 ```
-$ npm install -g seanewest/ndm#global
+$ npm install -g seanewest/ndm#global_subservices
 $ ndm install npmfs
-starting interview:
 [?] npmfs node_modules directory: /usr/local/npmfs/node_modules
 [?] npmfs bin directory: /usr/local/npmfs/bin
-[?] overwrite service.json with new values? Yes
-wrote /usr/local/lib/node_modules/npmfs/service.json back to disk.
+...
 $ ndm start npmfs
 ```
 permanently add the bin folder to our path
