@@ -82,5 +82,5 @@ remove the added paths if they were created
 sudo rm /etc/paths.d/npmfs
 
 #or on ubuntu (untested)
-sudo rm /etc/profile.d/npmfss.sh
+sudo rm /etc/profile.d/npmfs.sh
 ```
